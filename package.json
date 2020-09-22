@@ -1,0 +1,36 @@
+{
+  "name": "some-project",
+  "version": "1.0.0",
+  "description": "Just a test elm project",
+  "main": "main.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack --prod",
+    "test": "elm-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n/a.git"
+  },
+  "keywords": [
+    "elm",
+    "webpack"
+  ],
+  "author": "Andrew Cline",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/n/a/issues"
+  },
+  "homepage": "https://github.com/n/a#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "autoprefixer": "^10.0.0",
+    "elm-webpack-loader": "^7.0.1",
+    "html-webpack-plugin": "^4.5.0",
+    "postcss-loader": "^4.0.2",
+    "tailwindcss": "^1.8.10",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
