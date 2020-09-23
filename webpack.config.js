@@ -15,25 +15,15 @@ module.exports = {
           loader: 'elm-webpack-loader',
           options: {}
         }
-      },
-      {
-        test: /\.css$/,
-        use: [
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: [require('tailwindcss'), require('autoprefixer')]
-            }
-          }
-        ]
       }
     ]
   },
   plugins: [new HtmlLoader({ template: './public/index.html' })],
   devServer: {
+    watchContentBase: true,
     contentBase: path.join(__dirname, 'build'),
     compress: true,
+    open: true,
     port: 3000
   }
 }
