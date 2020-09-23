@@ -6,35 +6,47 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 
 
+type alias Todo =
+    { title : String
+    , completed : Bool
+    , id : Int
+
+    -- , tags : List String
+    }
+
+
 type alias Model =
-    Int
+    List Todo
 
 
 type Msg
-    = Increament
-    | Decreament
+    = AddTodo String
+    | CompleteTodo Int
+    | DeleteTodo Int
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increament ->
-            model + 1
+        AddTodo title ->
+            model ++ [ { title = title, completed = False, id = 1 } ]
 
-        Decreament ->
-            model - 1
+        _ ->
+            model
 
 
 view model =
     div [ class "bg-gray-200 min-h-screen pt-8" ]
         [ div [ class "container mx-auto" ]
             [ div [ class "bg-white shadow-lg rounded w-1/3 mx-auto flex flex-col items-center justify-center" ]
-                [ p [ class "text-4xl" ]
-                    [ text <| String.fromInt model ]
-                , div
+                [ div
                     []
-                    [ button [ class "bg-blue-500 px-8 py-2 m-2 rounded", onClick Increament ] [ text "+" ]
-                    , button [ class "bg-blue-500 px-8 py-2 m-2 rounded", onClick Decreament ] [ text "-" ]
+                  <|
+                    List.map
+                        (\todo -> p [ class "text-4xl" ] [ text todo.title ])
+                        model
+                , div []
+                    [ button [ class "bg-blue-500 px-8 py-2 m-2 rounded", onClick <| AddTodo "Code More Elm" ] [ text "+" ]
                     ]
                 ]
             ]
@@ -42,4 +54,4 @@ view model =
 
 
 main =
-    Browser.sandbox { init = 0, view = view, update = update }
+    Browser.sandbox { init = [], view = view, update = update }
