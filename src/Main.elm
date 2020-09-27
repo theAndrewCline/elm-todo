@@ -80,6 +80,9 @@ update msg model =
         ClearCompleted ->
             { model | list = List.filter (\x -> not x.completed) model.list }
 
+        DeleteTodo id ->
+            { model | list = List.filter (\x -> x.id /= id) model.list }
+
         ToggleCompleted id ->
             { model
                 | list =
@@ -93,9 +96,6 @@ update msg model =
                         )
                         model.list
             }
-
-        _ ->
-            model
 
 
 
@@ -148,7 +148,15 @@ todoView todo =
             else
                 "ml-2 text-xl"
     in
-    div [ class "flex items-center mx-4", onClick (ToggleCompleted todo.id) ]
-        [ input [ type_ "checkbox", checked todo.completed ] []
-        , p [ class classes ] [ text todo.title ]
+    div [ class "flex" ]
+        [ div
+            [ class "flex items-center mx-4", onClick (ToggleCompleted todo.id) ]
+            [ input [ type_ "checkbox", checked todo.completed ] []
+            , p [ class classes ] [ text todo.title ]
+            ]
+        , div [ class "flex items-center justify-center", onClick (DeleteTodo todo.id) ]
+            [ p
+                [ class "bg-red-600 text-white m-auto ml-2 w-4 h-4 text-xs rounded-full flex items-center justify-center" ]
+                [ text "x" ]
+            ]
         ]
