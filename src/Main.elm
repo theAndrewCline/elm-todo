@@ -4,6 +4,8 @@ import Browser
 import Html exposing (Html, button, div, input, p, span, text)
 import Html.Attributes exposing (checked, class, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
+import Random
+import UUID exposing (UUID)
 
 
 
@@ -12,23 +14,17 @@ import Html.Events exposing (onClick, onInput)
 
 main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init =
-            { list =
-                [ { title = "Code More Elm!"
-                  , completed = False
-                  , id = 1
-                  }
-                , { title = "Make More Things"
-                  , completed = False
-                  , id = 2
-                  }
-                ]
-            , input = ""
-            }
+    Browser.element
+        { init = init
         , view = view
         , update = update
+        , subscriptions = subscriptions
         }
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { list = [], input = "" }, Cmd.none )
 
 
 
@@ -38,7 +34,7 @@ main =
 type alias Todo =
     { title : String
     , completed : Bool
-    , id : Int
+    , id : UUID
     }
 
 
@@ -52,39 +48,50 @@ type alias Model =
 -- UPDATE
 
 
+idGenerator : Random.Generator UUID
+idGenerator =
+    UUID.generator
+
+
 type Msg
     = AddTodo
-    | ToggleCompleted Int
+    | ToggleCompleted UUID
     | ClearCompleted
-    | DeleteTodo Int
+    | DeleteTodo UUID
     | UpdateInput String
+    | CreateTodo UUID
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AddTodo ->
-            { input = ""
-            , list =
-                model.list
-                    ++ [ { title = model.input
-                         , completed = False
-                         , id = 1
-                         }
-                       ]
-            }
+            ( model, Random.generate CreateTodo idGenerator )
+
+        CreateTodo id ->
+            ( { input = ""
+              , list =
+                    model.list
+                        ++ [ { title = model.input
+                             , completed = False
+                             , id = id
+                             }
+                           ]
+              }
+            , Cmd.none
+            )
 
         UpdateInput string ->
-            { model | input = string }
+            ( { model | input = string }, Cmd.none )
 
         ClearCompleted ->
-            { model | list = List.filter (\x -> not x.completed) model.list }
+            ( { model | list = List.filter (\x -> not x.completed) model.list }, Cmd.none )
 
         DeleteTodo id ->
-            { model | list = List.filter (\x -> x.id /= id) model.list }
+            ( { model | list = List.filter (\x -> x.id /= id) model.list }, Cmd.none )
 
         ToggleCompleted id ->
-            { model
+            ( { model
                 | list =
                     List.map
                         (\x ->
@@ -95,7 +102,18 @@ update msg model =
                                 x
                         )
                         model.list
-            }
+              }
+            , Cmd.none
+            )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 
