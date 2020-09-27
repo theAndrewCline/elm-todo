@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, button, div, input, p, text)
+import Html exposing (Html, button, div, input, p, span, text)
 import Html.Attributes exposing (checked, class, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 
@@ -55,6 +55,7 @@ type alias Model =
 type Msg
     = AddTodo
     | ToggleCompleted Int
+    | ClearCompleted
     | DeleteTodo Int
     | UpdateInput String
 
@@ -75,6 +76,9 @@ update msg model =
 
         UpdateInput string ->
             { model | input = string }
+
+        ClearCompleted ->
+            { model | list = List.filter (\x -> not x.completed) model.list }
 
         ToggleCompleted id ->
             { model
@@ -106,17 +110,26 @@ view model =
             [ div
                 [ class "bg-white shadow-lg rounded w-2/3 mx-auto flex flex-col items-left justify-center" ]
                 [ listView model.list
-                , inputView model.input
+                , inputView model
                 ]
             ]
         ]
 
 
-inputView : String -> Html Msg
-inputView v =
+inputView : Model -> Html Msg
+inputView model =
+    let
+        clearButton =
+            if List.any (\x -> x.completed) model.list then
+                button [ class "bg-blue-400 px-8 py-2 m-2 rounded text-xl text-black", onClick ClearCompleted ] [ text "Clear Completed" ]
+
+            else
+                span [] []
+    in
     div [ class "m-auto" ]
-        [ input [ class "border px-4 py-2 m-2 text-xl", onInput UpdateInput, value v, placeholder "Add a todo!" ] []
+        [ input [ class "border px-4 py-2 m-2 text-xl", onInput UpdateInput, value model.input, placeholder "Add a todo!" ] []
         , button [ class "bg-blue-400 px-8 py-2 m-2 rounded text-xl text-black", onClick AddTodo ] [ text "+" ]
+        , clearButton
         ]
 
 
